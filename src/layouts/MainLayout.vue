@@ -1,5 +1,17 @@
 <template>
   <q-layout view="lHh Lpr lFf">
+    <q-header class="bg-white">
+      <q-toolbar class="text-black flex justify-end q-pa-lg">
+
+        <q-avatar class="cursor-pointer">
+          <q-icon name="fas fa-user"/>
+        </q-avatar>
+        <q-avatar class="cursor-pointer">
+          <q-img placeholder-src="https://cdn.quasar.dev/img/avatar.png"/>
+        </q-avatar>
+      </q-toolbar>
+    </q-header>
+
     <q-drawer
       show-if-above
       content-class="bg-deep-purple-7 flex column justify-between q-pa-lg"
@@ -23,7 +35,9 @@
           <div style="font-size: 1.4em" class="q-ml-lg">{{ $t(link.name) }}</div>
         </div>
         <q-separator color="white" inset="" spaced=""/>
-        <q-select dense bg-color="deep-purple-5" color="white" popup-content-class="text-white bg-deep-purple-5" options-selected-class="text-white"  outlined rounded :label="$t('language')" v-model="lang" :options="languageOptions"
+        <q-select class="q-mt-md" label-color="white" dense bg-color="deep-purple-5" color="white"
+                  popup-content-class="text-white bg-deep-purple-5" options-selected-class="text-white" outlined rounded
+                  :label="$t('language')" v-model="lang" :options="languageOptions"
                   @input="changeLanguage">
           <template v-slot:prepend v-if="lang!==null">
             {{ lang.flag }}
@@ -40,17 +54,22 @@
         </div>
       </div>
     </q-drawer>
-    <div class="bg-amber-1 text-accent"></div>
-      
+
     <q-page-container>
       <router-view/>
     </q-page-container>
+
+    <LoginPopup :open="doLogin" @closed="loginClosed"/>
   </q-layout>
 </template>
 
 <script>
+import LoginPopup from "components/LoginPopup";
 export default {
   name: 'MainLayout',
+  components: {
+    LoginPopup
+  },
   created() {
     /*
     * Pick saved lang
@@ -72,6 +91,7 @@ export default {
     return {
       lang: null,
       userIsLogged: false,
+      doLogin: false,
       activeLink: null,
       linksMenu: [
         {
@@ -120,14 +140,17 @@ export default {
           label: 'Spanish',
           value: 'es',
           flag: '🇪🇸'
-        },
-
+        }
       ]
 
     }
   },
   methods: {
     goTo(toPath) {
+
+      if (toPath.needsToBeLogged && !this.userIsLogged) {
+        this.doLogin = true;
+      }
       this.activeLink.active = false;
       toPath.active = true;
       this.activeLink = toPath
@@ -137,6 +160,9 @@ export default {
       this.lang = lang
       localStorage.setItem('language', JSON.stringify(lang))
       this.$i18n.locale = lang.value
+    },
+    loginClosed() {
+      this.doLogin = false;
     }
   },
 

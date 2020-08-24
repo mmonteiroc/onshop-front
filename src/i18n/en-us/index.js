@@ -5,8 +5,13 @@ export default {
   failed: 'Action failed',
   success: 'Action was successful',
   home: 'Home',
-  categories:'Categories',
-  cart:'Cart',
-  userProfile:'User profile',
-  settings: 'Settings'
+  categories: 'Categories',
+  cart: 'Cart',
+  userProfile: 'User profile',
+  settings: 'Settings',
+  language: 'Language',
+  login: 'Login',
+  email: 'Email',
+  passwd: 'Password',
+  access: 'Access'
 }
